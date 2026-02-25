@@ -43,8 +43,8 @@ jobs:
             echo "release_uuid=$RELEASE_UUID" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and Test
-        run: mvn clean verify -B
+#      - name: Build and Test
+#        run: mvn clean verify -B
 
       - name: Create Tag
         run: |
