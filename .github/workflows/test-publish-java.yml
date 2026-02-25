@@ -1,0 +1,48 @@
+# .github/workflows/test-publish-java.yml
+name: Test Publish Java SDK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+
+jobs:
+  test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - name: Set SNAPSHOT version
+        run: |
+          # 获取当前版本并添加 -SNAPSHOT 后缀
+          CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          SNAPSHOT_VERSION="${CURRENT_VERSION%-SNAPSHOT}-SNAPSHOT"
+          mvn versions:set -DnewVersion=$SNAPSHOT_VERSION -DgenerateBackupPoms=false
+          echo "Publishing SNAPSHOT version: $SNAPSHOT_VERSION"
+
+      - name: Build and Test
+        run: mvn clean verify -B
+
+      - name: Publish SNAPSHOT to OSSRH
+        run: mvn deploy -DskipTests -B
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+
+      - name: Verify SNAPSHOT availability
+        run: |
+          # 等待 OSSRH 同步
+          sleep 30
+          # 尝试下载验证
+          mvn dependency:get \
+            -DremoteRepositories=https://s01.oss.sonatype.org/content/repositories/snapshots/ \
+            -Dartifact=com.volcengine:volcengine-java-sdk:LATEST:jar
