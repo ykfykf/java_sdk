@@ -33,10 +33,14 @@ jobs:
 #        run: mvn clean verify -B
 
       - name: Publish SNAPSHOT to OSSRH
-        run: mvn deploy -DskipTests -B
+        run: |
+          mvn clean deploy -DskipTests -B \
+            -DaltDeploymentRepository=ossrh-snapshots::default::https://s01.oss.sonatype.org/content/repositories/snapshots/ \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}"
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Verify SNAPSHOT availability
         run: |
