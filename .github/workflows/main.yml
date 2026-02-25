@@ -1,4 +1,3 @@
-# .github/workflows/release.yml (Java)
 name: Release Java SDK
 
 on:
@@ -24,10 +23,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_TOKEN }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Extract Version
         id: version
@@ -76,11 +75,14 @@ jobs:
           body: ${{ steps.changelog.outputs.content }}
 
       - name: Publish to Maven Central
-        run: mvn deploy -P release -DskipTests -B
+        run: |
+          mvn clean deploy -DskipTests -B \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}" \
+            -DaltDeploymentRepository=ossrh::default::https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
         env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Notify CASM
         if: always()
