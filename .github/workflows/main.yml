@@ -22,7 +22,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-          server-id: ossrh
+          server-id: sonatype-nexus-staging
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -74,17 +74,11 @@ jobs:
           name: Release ${{ steps.version.outputs.tag }}
           body: ${{ steps.changelog.outputs.content }}
 
-      - name: Build All Modules First
-        run: |
-          cd $GITHUB_WORKSPACE
-          mvn -B clean install -DskipTests
-
       - name: Publish to Maven Central
         run: |
-          cd $GITHUB_WORKSPACE
-          mvn -B deploy -DskipTests \
-            -Dgpg.passphrase="${GPG_PASSPHRASE}" \
-            -DaltDeploymentRepository=ossrh::default::https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
+          mvn -B deploy -DskipTests -Ppublic \
+            -Dmaven.deploy.skip=true \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
