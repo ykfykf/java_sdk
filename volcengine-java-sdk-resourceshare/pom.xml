@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>volcengine-java-sdk</artifactId>
-        <groupId>com.volcengine</groupId>
-        <version>1.0.9</version>
+        <artifactId>ykf-volcengine-java-sdk</artifactId>
+        <groupId>io.github.ykfykf</groupId>
+        <version>1.0.9-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
     <description>The Java SDK for Volcengine resourceshare</description>
     <dependencies>
         <dependency>
-            <groupId>com.volcengine</groupId>
+            <groupId>io.github.ykfykf</groupId>
             <artifactId>volcengine-java-sdk-core</artifactId>
             <version>${project.version}</version>
         </dependency>
