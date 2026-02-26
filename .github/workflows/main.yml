@@ -31,7 +31,7 @@ jobs:
       - name: Extract Version
         id: version
         run: |
-          VERSION=$( mvn help:evaluate "-Dexpression=project.version" -q -DforceStdout)
+          VERSION=$(grep -m1 "<version>" pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
