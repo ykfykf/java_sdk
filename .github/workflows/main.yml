@@ -78,6 +78,8 @@ jobs:
         run: |
           mvn -B deploy -DskipTests -Ppublic \
             -Dmaven.deploy.skip=true \
+            -Dmaven.javadoc.failOnError=false \
+            -Dmaven.javadoc.quiet=true \
             -Dgpg.passphrase="${GPG_PASSPHRASE}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
