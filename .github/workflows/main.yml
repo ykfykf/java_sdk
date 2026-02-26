@@ -74,9 +74,12 @@ jobs:
           name: Release ${{ steps.version.outputs.tag }}
           body: ${{ steps.changelog.outputs.content }}
 
+      - name: Build All Modules First
+        run: mvn -B clean install -DskipTests
+
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -DskipTests -B \
+          mvn -B deploy -DskipTests \
             -Dgpg.passphrase="${GPG_PASSPHRASE}" \
             -DaltDeploymentRepository=ossrh::default::https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
         env:
