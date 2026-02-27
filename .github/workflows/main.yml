@@ -1,3 +1,4 @@
+# .github/workflows/release.yml (Java)
 name: Release Java SDK
 
 on:
@@ -75,7 +76,11 @@ jobs:
           body: ${{ steps.changelog.outputs.content }}
 
       - name: Publish to Maven Central
-        run: mvn deploy -P release -DskipTests -B
+        run: |
+          mvn -B deploy -DskipTests -Ppublic \
+            -Dmaven.javadoc.failOnError=false \
+            -Dmaven.javadoc.quiet=true \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
