@@ -35,7 +35,6 @@ jobs:
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "User=${{ secrets.OSSRH_USERNAME }} Token=${{ secrets.OSSRH_TOKEN }} GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }} GPG_PRIVATE_KEY=${{ secrets.GPG_PRIVATE_KEY }}"
 
       - name: Extract Release Info
         id: release_info
@@ -78,7 +77,7 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -Prelease -DskipTests -B -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+          mvn clean deploy -Prelease -DskipTests -B -Dgpg.passphrase="${GPG_PASSPHRASE}"   -Dusername="${MAVEN_USERNAME}"   -Dpassword="${MAVEN_PASSWORD}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
