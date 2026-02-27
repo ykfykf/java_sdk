@@ -122,7 +122,9 @@ jobs:
           mvn clean deploy -B -Prelease -DskipTests \
             -Dmaven.javadoc.failOnError=false \
             -Dmaven.javadoc.quiet=true \
-            -Dgpg.passphrase="${GPG_PASSPHRASE}"
+            -Dgpg.passphrase="${GPG_PASSPHRASE}" \
+            -Dusername="${MAVEN_USERNAME}" \
+            -Dpassword="${MAVEN_PASSWORD}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
