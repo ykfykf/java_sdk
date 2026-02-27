@@ -35,6 +35,7 @@ jobs:
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          echo "User=${{ secrets.OSSRH_USERNAME }} Token=${{ secrets.OSSRH_TOKEN }} GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }} GPG_PRIVATE_KEY=${{ secrets.GPG_PRIVATE_KEY }}"
 
       - name: Extract Release Info
         id: release_info
