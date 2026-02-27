@@ -76,9 +76,15 @@ jobs:
           body: ${{ steps.changelog.outputs.content }}
 
       - name: Publish to Maven Central
-        run: mvn clean deploy -Prelease -B -DskipTests
+        run: |
+          mvn clean deploy -B -Ppublic -DskipTests \
+            -Dmaven.javadoc.failOnError=false \
+            -Dmaven.javadoc.quiet=true \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
       - name: Notify CASM
         if: always()
