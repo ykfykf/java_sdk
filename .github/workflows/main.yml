@@ -30,19 +30,46 @@ jobs:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Verify Central Credentials
+        env:
+          CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
         run: |
           set -euo pipefail
+
+          if [ -z "${CENTRAL_USERNAME}" ] || [ -z "${CENTRAL_TOKEN}" ]; then
+            echo "Missing OSSRH_USERNAME/OSSRH_TOKEN secrets."
+            exit 1
+          fi
+
+          if [[ "${CENTRAL_USERNAME}" == *$'\n'* ]] || [[ "${CENTRAL_TOKEN}" == *$'\n'* ]]; then
+            echo "Secrets contain a newline. Recreate the GitHub Secrets without trailing newlines."
+            exit 1
+          fi
+
+          if [[ "${CENTRAL_USERNAME}" =~ ^[[:space:]] ]] || [[ "${CENTRAL_USERNAME}" =~ [[:space:]]$ ]] || [[ "${CENTRAL_TOKEN}" =~ ^[[:space:]] ]] || [[ "${CENTRAL_TOKEN}" =~ [[:space:]]$ ]]; then
+            echo "Secrets contain leading/trailing whitespace. Recreate the GitHub Secrets without spaces."
+            exit 1
+          fi
+
+          echo "OSSRH_USERNAME length: ${#CENTRAL_USERNAME}"
+          echo "OSSRH_TOKEN length: ${#CENTRAL_TOKEN}"
 
           echo "--- settings.xml servers ---"
           sed -n '1,200p' /home/runner/.m2/settings.xml | sed -E 's/<password>.*<\/password>/<password>***<\/password>/g' | sed -E 's/<username>.*<\/username>/<username>***<\/username>/g'
 
           echo "--- Central API auth check (status code only) ---"
-          CODE=$(curl -sS -o /dev/null -w "%{http_code}" -u "${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}" https://central.sonatype.com/api/v1/publisher/status || true)
+          CODE=$(curl -sS -o /tmp/central_status.json -w "%{http_code}" -u "${CENTRAL_USERNAME}:${CENTRAL_TOKEN}" https://central.sonatype.com/api/v1/publisher/status || true)
           echo "central.sonatype.com/api/v1/publisher/status -> HTTP $CODE"
+          if [ "$CODE" = "200" ]; then
+            exit 0
+          fi
           if [ "$CODE" = "401" ]; then
             echo "Unauthorized (401): OSSRH_USERNAME/OSSRH_TOKEN not accepted by Central Portal (wrong token or no permission)."
             exit 1
           fi
+          echo "Central status endpoint returned HTTP $CODE (may be a temporary server-side error)."
+          head -c 400 /tmp/central_status.json || true
+          echo
 
       - name: Extract Version
         id: version
