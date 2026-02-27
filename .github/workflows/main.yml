@@ -43,8 +43,8 @@ jobs:
             echo "release_uuid=$RELEASE_UUID" >> $GITHUB_OUTPUT
           fi
 
-#      - name: Build and Test
-#        run: mvn clean verify -B
+      - name: Build and Test
+        run: mvn clean verify -B
 
       - name: Create Tag
         run: |
@@ -75,12 +75,7 @@ jobs:
           body: ${{ steps.changelog.outputs.content }}
 
       - name: Publish to Maven Central
-        run: |
-          mvn -B deploy -DskipTests -Ppublic \
-            -Dmaven.deploy.skip=true \
-            -Dmaven.javadoc.failOnError=false \
-            -Dmaven.javadoc.quiet=true \
-            -Dgpg.passphrase="${GPG_PASSPHRASE}"
+        run: mvn deploy -P release -DskipTests -B
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
