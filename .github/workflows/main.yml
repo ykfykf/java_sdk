@@ -29,6 +29,21 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: Verify Central Credentials
+        run: |
+          set -euo pipefail
+
+          echo "--- settings.xml servers ---"
+          sed -n '1,200p' /home/runner/.m2/settings.xml | sed -E 's/<password>.*<\/password>/<password>***<\/password>/g' | sed -E 's/<username>.*<\/username>/<username>***<\/username>/g'
+
+          echo "--- Central API auth check (status code only) ---"
+          CODE=$(curl -sS -o /dev/null -w "%{http_code}" -u "${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_TOKEN }}" https://central.sonatype.com/api/v1/publisher/status || true)
+          echo "central.sonatype.com/api/v1/publisher/status -> HTTP $CODE"
+          if [ "$CODE" = "401" ]; then
+            echo "Unauthorized (401): OSSRH_USERNAME/OSSRH_TOKEN not accepted by Central Portal (wrong token or no permission)."
+            exit 1
+          fi
+
       - name: Extract Version
         id: version
         run: |
