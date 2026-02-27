@@ -77,7 +77,7 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -B -Ppublic -DskipTests \
+          mvn clean deploy -B -Prelease -DskipTests \
             -Dmaven.javadoc.failOnError=false \
             -Dmaven.javadoc.quiet=true \
             -Dgpg.passphrase="${GPG_PASSPHRASE}"
