@@ -24,15 +24,15 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           server-id: central
-          server-username: ${{ secrets.OSSRH_USERNAME }}
-          server-password: ${{ secrets.OSSRH_TOKEN }}
+          server-username: yii8Ju
+          server-password: SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Verify Central Credentials
         env:
-          CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          CENTRAL_USERNAME: yii8Ju
+          CENTRAL_TOKEN: SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7
         run: |
           set -euo pipefail
 
@@ -130,8 +130,8 @@ jobs:
         run: mvn deploy -Prelease -DskipTests
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_USERNAME: yii8Ju
+          MAVEN_PASSWORD: SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7
 
       - name: Notify CASM
         if: always()
