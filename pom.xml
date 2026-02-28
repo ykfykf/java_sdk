@@ -134,8 +134,6 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <useAgent>false</useAgent>
-                                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
@@ -196,6 +194,5 @@
     </build>
     <modules>
         <module>volcengine-java-sdk-core</module>
-        <module>volcengine-java-sdk-acep</module>
     </modules>
 </project>
