@@ -127,10 +127,6 @@ jobs:
       #       -Dpassword="${MAVEN_PASSWORD}"
       - name: Publish to Apache Maven Central
         run: mvn deploy
-        env:
-          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSWORD }}
           
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
