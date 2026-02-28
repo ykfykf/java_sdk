@@ -24,8 +24,8 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           server-id: central
-          server-username: OSSRH_USERNAME
-          server-password: OSSRH_TOKEN
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_TOKEN }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
@@ -122,9 +122,13 @@ jobs:
           mvn clean deploy -B -Prelease -DskipTests \
             -Dmaven.javadoc.failOnError=false \
             -Dmaven.javadoc.quiet=true \
-            -Dgpg.passphrase="${GPG_PASSPHRASE}"
+            -Dgpg.passphrase="${GPG_PASSPHRASE}" \
+            -Dusername="${MAVEN_USERNAME}" \
+            -Dpassword="${MAVEN_PASSWORD}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
       - name: Notify CASM
         if: always()
