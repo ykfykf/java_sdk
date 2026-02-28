@@ -24,15 +24,15 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           server-id: central
-          server-username: yii8Ju
-          server-password: SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_TOKEN }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Verify Central Credentials
         env:
-          CENTRAL_USERNAME: yii8Ju
-          CENTRAL_TOKEN: SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7
+          CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -117,21 +117,18 @@ jobs:
           name: Release ${{ steps.version.outputs.tag }}
           body: ${{ steps.changelog.outputs.content }}
 
-      # - name: Publish to Maven Central
-      #   run: |
-      #     mvn clean deploy -B -Prelease -DskipTests \
-      #       -Dmaven.javadoc.failOnError=false \
-      #       -Dmaven.javadoc.quiet=true \
-      #       -Dgpg.passphrase="${GPG_PASSPHRASE}" \
-      #       -Dusername="${MAVEN_USERNAME}" \
-      #       -Dpassword="${MAVEN_PASSWORD}"
-
-      - name: Publish to Apache Maven Central
-        run: mvn deploy -Prelease -DskipTests
+      - name: Publish to Maven Central
+        run: |
+          mvn clean deploy -B -Prelease -DskipTests \
+            -Dmaven.javadoc.failOnError=false \
+            -Dmaven.javadoc.quiet=true \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}" \
+            -Dusername="${MAVEN_USERNAME}" \
+            -Dpassword="${MAVEN_PASSWORD}"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          MAVEN_USERNAME: yii8Ju
-          MAVEN_PASSWORD: SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
       - name: Notify CASM
         if: always()
