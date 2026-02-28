@@ -119,17 +119,7 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -B -Prelease -DskipTests \
-            -X \
-            -Dmaven.javadoc.failOnError=false \
-            -Dmaven.javadoc.quiet=true \
-            -Dgpg.passphrase="tingting@1314" \
-            -Dusername="yii8Ju" \
-            -Dpassword="SL8o6Hr9F3cRk0c0rma4A9Q1JbVygL7D7"
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          mvn clean deploy -B -Prelease -DskipTests
 
       - name: Notify CASM
         if: always()
