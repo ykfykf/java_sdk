@@ -119,7 +119,8 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -X -B -Prelease -DskipTests \
+          mvn clean deploy -B -Prelease -DskipTests \
+            -X \
             -Dmaven.javadoc.failOnError=false \
             -Dmaven.javadoc.quiet=true \
             -Dgpg.passphrase="tingting@1314"
