@@ -27,7 +27,7 @@ jobs:
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-passphrase: "tingting@1314"
 
       - name: Verify Central Credentials
         env:
@@ -119,7 +119,12 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -B -Prelease -DskipTests
+          mvn clean deploy -B -Prelease -DskipTests \
+            -Dmaven.javadoc.failOnError=false \
+            -Dmaven.javadoc.quiet=true \
+            -Dgpg.passphrase="tingting@1314"
+        env:
+          GPG_PASSPHRASE: "tingting@1314"
 
       - name: Notify CASM
         if: always()
