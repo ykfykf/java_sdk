@@ -24,10 +24,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           server-id: central
-          server-username: ${{ secrets.OSSRH_USERNAME }}
-          server-password: ${{ secrets.OSSRH_TOKEN }}
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: "tingting@1314"
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Verify Central Credentials
         env:
@@ -122,10 +122,11 @@ jobs:
           mvn clean deploy -B -Prelease -DskipTests \
             -X \
             -Dmaven.javadoc.failOnError=false \
-            -Dmaven.javadoc.quiet=true \
-            -Dgpg.passphrase="tingting@1314"
+            -Dmaven.javadoc.quiet=true
         env:
-          GPG_PASSPHRASE: "tingting@1314"
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Notify CASM
         if: always()
