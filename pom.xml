@@ -103,7 +103,7 @@
     </dependencyManagement>
     <profiles>
         <profile>
-            <id>release</id>
+            <id>public</id>
             <build>
                 <plugins>
 
